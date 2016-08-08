@@ -53,7 +53,6 @@ def audio_thread(socket_connection):
         data = socket_connection.recv(SIZE)
         if data:
             stream.write(data)
-            # socket_connection.send('ACK')  # Not necessary
 
     socket_connection.close()
     stream.stop_stream()
@@ -71,7 +70,7 @@ if __name__ == '__main__':
     connection_audio.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     connection_audio.settimeout(TIMEOUT_SOCKET)
 
-    # Connect both channels with the server
+    # Connect channels
     connection_video.connect((IP_SERVER, VIDEO_SERVER_PORT))
     connection_audio.connect((IP_SERVER, AUDIO_SERVER_PORT))
 
