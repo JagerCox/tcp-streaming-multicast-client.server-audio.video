@@ -82,9 +82,9 @@ if __name__ == '__main__':
     while True:
         try:
             # Recept video data
-            rfileobj = connection_video.makefile(mode='rb')
-            result = rfileobj.readline()
-            rfileobj.close()
+            fileDescriptor = connection_video.makefile(mode='rb')
+            result = fileDescriptor.readline()
+            fileDescriptor.close()
 
             # Create image
             result = base64.b64decode(result)

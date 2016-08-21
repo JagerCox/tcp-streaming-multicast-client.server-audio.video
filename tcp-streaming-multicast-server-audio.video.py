@@ -23,14 +23,14 @@ __version__ = "0.1"
 __python_version__ = "2.7"
 __email__ = "jagercox@gmail.com"
 
-# Sockets channels
+# Sockets channels configuration
 IP_SERVER = "0.0.0.0"
 VIDEO_SERVER_PORT = 11111
 AUDIO_SERVER_PORT = 11112
 MAX_NUM_CONNECTIONS = 20
 
 # Webcam configuration
-VIDEOCAM_INDEX = 0
+VIDEO_CAM_INDEX = 0
 
 # PyAudio configuration
 SIZE_PACKAGE = 1024
@@ -41,7 +41,7 @@ INPUT = True
 FORMAT = pyaudio.paInt16
 
 
-class connection_pool_audio(Thread):
+class ConnectionPoolAudio(Thread):
     def __init__(self, ip, port, conn, device):
         Thread.__init__(self)
         self.ip = ip
@@ -58,7 +58,8 @@ class connection_pool_audio(Thread):
             self.conn.recv(SIZE)
         self.conn.close()
 
-class connection_pool_video(Thread):
+
+class ConnectionPoolVideo(Thread):
     def __init__(self, ip, port, conn, device):
         Thread.__init__(self)
         self.ip = ip
@@ -74,7 +75,7 @@ class connection_pool_video(Thread):
                 ret, frame = self.device.read()
                 data = frame.tostring()
                 self.conn.sendall(base64.b64encode(data) + '\r\n')
-        except:
+        except ValueError:
             print "Connection lost with " + self.ip + ":" + str(self.port)
         self.conn.close()
 
@@ -92,23 +93,23 @@ def tcp_audio_thread():
     connection.listen(MAX_NUM_CONNECTIONS_LISTENER)
     while True:
         (conn, (ip, port)) = connection.accept()
-        t = connection_pool_audio(ip, port, conn, stream)
-        t.start()
+        thread = ConnectionPoolAudio(ip, port, conn, stream)
+        thread.start()
     stream.stop_stream()
     stream.close()
     p.terminate()
 
 
 def tcp_video_thread():
-    camera = cv2.VideoCapture(VIDEOCAM_INDEX)
+    camera = cv2.VideoCapture(VIDEO_CAM_INDEX)
     connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     connection.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
     connection.bind((IP_SERVER, VIDEO_SERVER_PORT))
     connection.listen(MAX_NUM_CONNECTIONS_LISTENER)
     while True:
         (conn, (ip, port)) = connection.accept()
-        t = connection_pool_video(ip, port, conn, camera)
-        t.start()
+        thread = ConnectionPoolVideo(ip, port, conn, camera)
+        thread.start()
     camera.release()
 
 
