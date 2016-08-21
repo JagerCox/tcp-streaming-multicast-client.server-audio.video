@@ -27,10 +27,10 @@ __email__ = "jagercox@gmail.com"
 IP_SERVER = "0.0.0.0"
 VIDEO_SERVER_PORT = 11111
 AUDIO_SERVER_PORT = 11112
-MAX_NUM_CONNECTIONS = 20
+MAX_NUM_CONNECTIONS_LISTENER = 20
 
 # Webcam configuration
-VIDEO_CAM_INDEX = 0
+VIDEO_CAM_INDEX = 1
 
 # PyAudio configuration
 SIZE_PACKAGE = 1024
